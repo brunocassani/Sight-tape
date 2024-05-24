@@ -34,7 +34,6 @@ def create_pdf(pdf_filename, setup_filename, angles_filename):
     draw_scales(c)
 
     angles_data = read_angles(angles_filename)
-    print(angles_data)
     
     # Draw tapes
     draw_tapes(c, angles_data, setup_data)
@@ -158,60 +157,55 @@ def draw_info(c, setup_data):
 
 
 def draw_tapes(c, angles_data, setup_data):
-    '''
-    What I need to do:
-
-    Find the angles per inch using the Range 1, Range 2, their respective angles, and the Difference of 1 & 2
-
-    Then draw the sight tape at the top RIGHT (next to the table with specs), using the padding as before. It should look like this. 
-    It should look like a ruler with big markings every distance ending in zero, middle markings every 5, and small markings every 1.
     
-    ...
-    |--------|
-    |---- 10 |
-    |-       |
-    |-       |
-    |-       |
-    |-       |
-    |---     |
-    |-       |
-    |-       |
-    |-       |
-    |-       |
-    |---- 20 |
-    |...     |
-    until the max range
-
-    Picture the start of the tape as angle 0 and the end as (angles(max_range)) rounded up.
-    It should be a thin rectangle of width .320 inches and height [max_range(angle) - min_range(angle) * angles_per_inch] + a little padding but not the same as the other one.
-    Because of the small width, the text next to the markings should be quite small, but still readable.
-    Do this to scale with real world inches (similar to the scale check) using the angles per inch. 
-    
-    Do this by first plotting the angles (which should be done linearly like a ruler using the angles per inch) and assigning them a distance (not necessarily linear). 
-    Then draw the markings at the appropriate distances, as well as the range number for multiples of 10.
-
-    Min range and max range are multiples of 10
-    '''
     # Constants for the sight tape
     tape_width = 0.320 * 72  # Width in points
-    max_range = int(setup_data.get("Max range", 120))
-    min_range = int(setup_data.get("Min range", 10))
+    max_range = int(setup_data["Max range"])
+    min_range = int(setup_data["Min range"])
 
     # Calculate the height of the sight tape in points
-    max_angle = angles_data[max_range]
-    min_angle = angles_data[min_range]
-    inches_per_angle = setup_data["Difference of 1 & 2"] / (angles_data[int(setup_data["Range 1"])] - angles_data[int(setup_data["Range 2"])])
-    tape_height = angles_data[max_range] * inches_per_angle * 72  # Convert inches to points
+    inches_per_angle = setup_data["Difference of 1 & 2"] / abs((angles_data[int(setup_data["Range 1"])] - angles_data[int(setup_data["Range 2"])]))
+    tape_height = angles_data[max_range] * inches_per_angle * 72 # Convert inches to points
 
 
     tape_x = c._pagesize[0] - padding - tape_width  # Right side of the page with padding
-    tape_y = 750 - padding  # Starting from the bottom of the setup specs table
+    tape_y = 750 - padding - tape_height
 
     # Draw the sight tape background
     c.setFillColorRGB(1, 1, 1)  # White fill color
     c.setDash(4, 2)  # Dashed line style
     c.rect(tape_x, tape_y, tape_width, tape_height, stroke=1, fill=1)
     c.setDash(1, 0)
+    
+   
+    print("inches per full angle", inches_per_angle)
+
+    for i in range(int(min_range), int(max_range) + 1):
+        
+        # Calculate the y position of the angle
+        angle_y = tape_y + (angles_data[max_range] - angles_data[i]) * inches_per_angle * 72
+        print("angle_y", angle_y)
+        
+
+        # Draw the range text
+        if i % 10 == 0:
+            c.setStrokeColorRGB(255, 0, 0) # Red color
+            c.line(tape_x, angle_y, tape_x + tape_width, angle_y)
+            c.setFont("Helvetica", 6)
+            c.setFillColorRGB(0,0,0)
+            c.drawString(tape_x + tape_width - 8, angle_y +  1, str(i))
+
+        elif i % 5 == 0:
+            c.setStrokeColorRGB(0, 255, 0) # Red color
+            c.line(tape_x, angle_y, tape_x + tape_width - 10, angle_y)
+            c.setFont("Helvetica", 5)
+            c.setFillColorRGB(0,0,0)
+            c.drawString(tape_x + tape_width - 8, angle_y - 1, str(i))
+
+        else:
+            c.setStrokeColorRGB(0, 0, 255)   # Blue color
+            c.line(tape_x, angle_y, tape_x + tape_width - 15, angle_y)
+
     
 
     
