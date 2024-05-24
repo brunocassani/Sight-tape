@@ -1,0 +1,12 @@
+"Sight height": 0
+"Sight radius": 0
+"Arrow weight": 358.231334
+"Arrow length": 27.3622
+"Arrow diameter": 0.225984252
+"Arrow speed": 260
+"Range 1": 20
+"Range 2": 60
+"Difference of 1 & 2": 1.3875
+"Max range": 120
+"Min range": 10
+"metric": False
