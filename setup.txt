@@ -8,5 +8,5 @@
 "Range 2": 60
 "Difference of 1 & 2": 1.3875
 "Max range": 120
-"Min range": 10
+"Min range": 20
 "metric": False
