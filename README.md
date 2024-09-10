@@ -4,4 +4,4 @@ Prototype of a PDF maker with bow specs to be inputted directly into the files. 
 
 # Compatibility
 The project can be used as-is on MacOS with access to Terminal.\
-Warning: You might need to change data on the `Trajectory.cpp`, `report.py`, and `setup.txt` for it to be funcional for your own purposes.
+**Warning:** You might need to change data on the `Trajectory.cpp`, `report.py`, and `setup.txt` for it to be funcional for your own purposes.
